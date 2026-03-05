@@ -1,6 +1,6 @@
-# Stepper Skill Sets for Claude Code
+# Stepper Skill Sets for AI
 
-A [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code/skills) that lets Claude interact with third-party services (Google Sheets, Slack, and more) through the [Stepper](https://stepper.io) `stpr` CLI.
+A [skill](https://www.npmjs.com/package/skills) that lets AI systems like Claude Code, OpenClaw interact with third-party services (Google Sheets, Slack, and more) through the [Stepper](https://stepper.io) `stpr` CLI in a secure, controlled and observable way.
 
 ## Installation
 
