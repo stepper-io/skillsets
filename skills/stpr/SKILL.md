@@ -21,14 +21,9 @@ You have access to the `stpr` CLI for executing integration actions through
 Install the `stpr` CLI before using any skill commands:
 
 ```bash
-npm install -g @anthropic-ai/stpr
+npm install -g stpr
 ```
-
-Or with Homebrew:
-
-```bash
-brew install stepper-io/tap/stpr
-```
+Or alternatively you can call `npx stpr` to use the latest version automatically.
 
 ## Authentication
 
