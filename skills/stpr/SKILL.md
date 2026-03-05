@@ -16,6 +16,20 @@ allowed-tools: Bash(stpr:*)
 You have access to the `stpr` CLI for executing integration actions through
 [Stepper](https://stepper.io) Skill Sets.
 
+## Installation
+
+Install the `stpr` CLI before using any skill commands:
+
+```bash
+npm install -g @anthropic-ai/stpr
+```
+
+Or with Homebrew:
+
+```bash
+brew install stepper-io/tap/stpr
+```
+
 ## Authentication
 
 Before using any skill commands, ensure the user is authenticated. There are
