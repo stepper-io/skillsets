@@ -9,13 +9,7 @@ You can also interact with Stepper Skill Sets via MCP (<https://mcp.stepper.io/s
 ### 1. Install the `stpr` CLI
 
 ```bash
-npm install -g @anthropic-ai/stpr
-```
-
-Or with Homebrew:
-
-```bash
-brew install stepper-io/tap/stpr
+npm install -g stpr
 ```
 
 ### 2. Add the skill to Claude Code
