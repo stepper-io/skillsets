@@ -1,4 +1,4 @@
-# Stepper Skill Sets for AI
+# Stepper Skill Sets
 
 A [skill](https://www.npmjs.com/package/skills) that lets AI systems like Claude Code, OpenCode, Code, OpenClaw and more interact with third-party services (Google Sheets, Slack, and more) through the [Stepper Skill Sets](https://stepper.io/skill-sets) `stpr` CLI in a secure, controlled and observable way.
 
