@@ -14,7 +14,9 @@ allowed-tools: Bash(stpr:*)
 # Stepper Skills CLI (`stpr`)
 
 You have access to the `stpr` CLI for executing integration actions through
-[Stepper](https://stepper.io) Skill Sets.
+[Stepper](https://stepper.io) Skill Sets. Skill Sets let you bundle integration
+actions into curated, authenticated toolkits — and expose them to AI agents,
+CLIs, and any MCP-compatible client.
 
 ## Installation
 
@@ -23,26 +25,36 @@ Install the `stpr` CLI before using any skill commands:
 ```bash
 npm install -g stpr
 ```
-Or alternatively you can call `npx stpr` to use the latest version automatically.
 
 ## Authentication
 
 Before using any skill commands, ensure the user is authenticated. There are
 three authentication methods:
 
-1. **OAuth login (recommended):** Run `stpr login` to open a browser and save
-   credentials to `~/.config/stepper-skillsets/config.json`. Tokens refresh
-   automatically.
+1. **OAuth login (recommended):** Run `stpr login` to open a browser and
+   select a Skill Set. Credentials are saved to
+   `~/.config/stepper-skillsets/config.json` and automatically refreshed when
+   they expire.
 2. **Static token:** Pass `--token sst_<token>` on any command. Tokens are
    generated at <https://app.stepper.io/flow/skill-sets>.
 3. **Environment variable:** Set `STEPPER_SKILL_TOKEN=sst_<token>`.
 
 Check the current session with `stpr whoami`.
 
+## Profile Management
+
+```bash
+stpr login                 # Authenticate via OAuth (opens browser)
+stpr logout [name]         # Remove a saved profile, or all profiles if no name given
+stpr profiles              # List all saved profiles
+stpr use <name>            # Switch the active profile
+stpr whoami                # Show active profile and server info
+```
+
 ## Discovering Skills
 
 ```bash
-stpr list                  # List all available skills grouped by service
+stpr list                  # List all available skills, grouped by service
 stpr list --verbose        # Include full input schemas
 stpr list <service>        # List skills for a specific service
 stpr <service>             # Shorthand for listing a service's skills
@@ -50,35 +62,51 @@ stpr <service>             # Shorthand for listing a service's skills
 
 ## Inspecting Parameters
 
-Calling a skill **without** `--call` returns its current parameter schema:
+Many skills have dynamic parameters — fields that change based on the values of
+other fields. Calling a skill **without** `--call` returns its current parameter
+schema:
 
 ```bash
-stpr google-sheets add_row -i '{}'
+# See what fields are needed for add_row, given a spreadsheet
+stpr google-sheets add_row -i '{"spreadsheet_id": "abc123"}'
 ```
 
-For dynamic dropdown fields, use `--options`:
+Some parameters have dynamic dropdown options. Fetch them with `--options`:
 
 ```bash
 stpr google-sheets add_row --options worksheet_id \
-  -i '{"spreadsheet_id": "abc123"}'
+  -i '{"spreadsheet_id": "abc123"}' \
+  --search "Sheet" \
+  --cursor "next_page"
 ```
-
-Add `--search <query>` and `--cursor <cursor>` for filtering and pagination.
 
 ## Executing Skills
 
-Use the `--call` flag to execute an action. Pass JSON input with `-i` or via
-stdin:
+Use the `--call` flag to execute an action:
 
 ```bash
 stpr google-sheets create_sheet --call \
   -i '{"name": "Q1 Report", "columns": "Name, Email, Phone"}'
 ```
 
-For async operations, poll the result with:
+## Polling Async Results
+
+Component library tools run asynchronously. Poll for results with:
 
 ```bash
 stpr status <statusId>
+```
+
+## Input
+
+Pass JSON input via the `-i` / `--input` flag or pipe it through stdin:
+
+```bash
+# Flag
+stpr slack send_message --call -i '{"channel": "#general", "text": "Hello!"}'
+
+# Stdin
+echo '{"channel": "#general", "text": "Hello!"}' | stpr slack send_message --call
 ```
 
 ## Workflow
@@ -94,29 +122,28 @@ Follow this sequence when the user asks you to perform an integration action:
 5. **Report** -- Show the user the result. If the response contains a
    `statusId`, poll with `stpr status <statusId>` and report the final result.
 
-## Profile Management
-
-Users can manage multiple Stepper Skill Set profiles:
-
-```bash
-stpr profiles              # List saved profiles
-stpr use <name>            # Switch the active profile
-stpr logout [name]         # Remove a profile (or all if no name given)
-```
-
-## Global Flags
+## Options Reference
 
 | Flag | Description |
 |---|---|
-| `--token <token>` | Auth token (overrides saved profiles and env var) |
+| `--token <token>` | Auth token (overrides saved profiles and `STEPPER_SKILL_TOKEN`) |
 | `--base-url <url>` | Override MCP server URL (default: `https://mcp.stepper.io`) |
-| `--skillset <name>` | Use a specific saved profile |
-| `--call` | Execute the skill action |
-| `--verbose` | Include full input schemas in listings |
-| `-i, --input <json>` | JSON input for calls or parameter fetches |
+| `--skillset <name>` | Use a specific saved profile instead of the active one |
+| `--call` | Execute the skill (default behavior is parameter inspection) |
+| `--verbose` | Include full `inputSchema` when listing skills |
+| `-i, --input <json>` | JSON input for calls, parameter fetches, or option queries |
 | `--options <param>` | Fetch dynamic dropdown options for a parameter |
-| `--search <query>` | Filter dropdown options |
+| `--search <query>` | Filter dropdown options by search term |
 | `--cursor <cursor>` | Pagination cursor for dropdown options |
+| `-h, --help` | Show help |
+| `-v, --version` | Show version |
+
+## Environment Variables
+
+| Variable | Description |
+|---|---|
+| `STEPPER_SKILL_TOKEN` | Auth token (used when no `--token` flag and no saved profile) |
+| `STEPPER_URL` | Override the MCP server base URL |
 
 ## Important Notes
 
